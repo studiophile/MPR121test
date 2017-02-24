@@ -28,13 +28,13 @@
 #include "Adafruit_BLEMIDI.h"
 #include "BluefruitConfig.h"
 
-#define FACTORYRESET_ENABLE         1
+#define FACTORYRESET_ENABLE         0 // disabled by lilli
 #define MINIMUM_FIRMWARE_VERSION    "0.7.0"
 
 Adafruit_BluefruitLE_SPI ble(BLUEFRUIT_SPI_CS, BLUEFRUIT_SPI_IRQ, BLUEFRUIT_SPI_RST);
 
 #define NEO_PIN  6
-#define LEDS     16
+#define LEDS     50
 #define TEMPO    60
 #define BUTTONS  6
 #define IRQ_PIN  A4
@@ -100,7 +100,7 @@ void setup() {
     error(F("Couldn't find Bluefruit, make sure it's in CoMmanD mode & check wiring?"));
   }
   Serial.println( F("OK!") );
-
+  
   if ( FACTORYRESET_ENABLE )
   {
     /* Perform a factory reset to make sure everything is in a known state */
@@ -111,25 +111,25 @@ void setup() {
   }
 
   //ble.sendCommandCheckOK(F("AT+uartflow=off"));
-  ble.echo(false);
+  //ble.echo(false);
 
-  Serial.println("Requesting Bluefruit info:");
+  //Serial.println("Requesting Bluefruit info:");
   /* Print Bluefruit information */
-  ble.info();
+  //ble.info();
   
   /* Set BLE callbacks */
-  ble.setConnectCallback(connected);
-  ble.setDisconnectCallback(disconnected);
+  //ble.setConnectCallback(connected);
+  //ble.setDisconnectCallback(disconnected);
   
-  Serial.println(F("Enable MIDI: "));
-  if ( ! blemidi.begin(true) )
-  {
-    error(F("Could not enable MIDI"));
-  }
-    
-  ble.verbose(false);
-  Serial.print(F("Waiting for a connection..."));
-  
+//  Serial.println(F("Enable MIDI: "));
+//  if ( ! blemidi.begin(true) )
+//  {
+//    error(F("Could not enable MIDI"));
+//  }
+//    
+//  ble.verbose(false);
+//  Serial.print(F("Waiting for a connection..."));
+
   // set mpr121 IRQ pin to input
   pinMode(IRQ_PIN, INPUT);
 
