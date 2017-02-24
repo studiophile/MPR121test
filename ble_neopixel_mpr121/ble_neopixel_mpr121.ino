@@ -34,7 +34,7 @@
 Adafruit_BluefruitLE_SPI ble(BLUEFRUIT_SPI_CS, BLUEFRUIT_SPI_IRQ, BLUEFRUIT_SPI_RST);
 
 #define NEO_PIN  6
-#define LEDS     50
+#define LEDS     16
 #define TEMPO    60
 #define BUTTONS  6
 #define IRQ_PIN  A4
@@ -95,7 +95,7 @@ void setup() {
 
   Serial.print(F("Initialising the Bluefruit LE module: "));
 
-  if ( !ble.begin(VERBOSE_MODE) )
+  if ( !ble.begin(0) )
   {
     error(F("Couldn't find Bluefruit, make sure it's in CoMmanD mode & check wiring?"));
   }
@@ -169,6 +169,13 @@ void loop() {
 ///////////////////////////////////////////////////////////////////////////////
 
 // deal with note on and off presses
+void play_lights(){
+    Serial.println("yo");
+
+  int buttonTouched = cap.touched();
+  Serial.println(buttonTouched);
+}
+
 void handle_note() {
 
   for (uint8_t i=0; i < BUTTONS; i++) {
@@ -178,7 +185,8 @@ void handle_note() {
 
       // play pressed note
       midi(channel, 0x9, pitch[i], vel[i]);
-
+      //show_range(1, 16, 255, 255, 255);
+      play_lights();
       // if recording, save note on
       if(record_mode)
         seq.setNote(channel, pitch[i], vel[i]);
@@ -190,6 +198,7 @@ void handle_note() {
 
       // play note off
       midi(channel, 0x8, pitch[i], 0x0);
+      show_range(0, 16, 0, 0, 0);
 
       // if recording, save note off
       if(record_mode)
@@ -239,33 +248,34 @@ void handle_command() {
 // select which mode to enter
 void select_mode() {
 
-  // switch pads 1-6
-  switch(currtouched) {
-
-    case 0x1:
-      if(lasttouched != 0x3)
-        tempo_mode = true;
-      break;
-    case 0x2:
-      if(lasttouched != 0x3)
-        shuffle_mode = true;
-      break;
-    case 0x4:
-      position_selected = true;
-      step_mode = true;
-      break;
-    case 0x8:
-      position_selected = true;
-      channel_mode = true;
-      break;
-    case 0x10:
-      pitch_mode = true;
-      break;
-    case 0x20:
+//  // switch pads 1-6
+//  switch(currtouched) {
+//
+//    case 0x1:
+//      if(lasttouched != 0x3)
+//        tempo_mode = true;
+//      break;
+//    case 0x2:
+//      if(lasttouched != 0x3)
+//        shuffle_mode = true;
+//      break;
+//    case 0x4:
+//      position_selected = true;
+//      step_mode = true;
+//      break;
+//    case 0x8:
+//      position_selected = true;
+//      channel_mode = true;
+//      break;
+//    case 0x10:
+//      pitch_mode = true;
+//      break;
+//    case 0x20:
+//      velocity_mode = true;
+//      break;
       velocity_mode = true;
-      break;
 
-  }
+ // }
 
 }
 
@@ -346,7 +356,7 @@ int change_value(int &current, int max_val) {
 // called when the step position changes. both the current
 // position and last are passed to the callback
 void step(int current, int last) {
-
+  //Serial.print("step\n");
   // if we are in a command mode, flash command
   if(command_mode) {
     mode_flash(current);
@@ -467,6 +477,8 @@ void show_range(int start, int last, byte r, byte g, byte b) {
 // set of states is set up for 6 pads, but you could
 // easily modify the hex values to match the ammount
 // pads you are using
+
+
 void readButtons() {
 
   // read current values
